@@ -22,6 +22,12 @@ df_temp['t'] = df_temp['t'].apply(convert_temp)
 
 ds_vis = ds.get('vis')
 df_vis = ds_vis.to_dataframe()
-print(df_vis.columns)
-for item in list(df_vis.values)[:3]:
+# print(df_vis.columns)
+# for item in list(df_vis.values)[:3]:
+#     print(item)
+
+ds_gust = ds.get('gust')
+df_gust = ds_gust.to_dataframe()
+print(df_gust.columns)
+for item in list(df_gust.values)[:3]:
     print(item)
