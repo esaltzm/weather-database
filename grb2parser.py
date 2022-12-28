@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgrib", filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
-plt.contourf(ds['crain'])
-plt.colorbar()
-plt.show()
+# plt.contourf(ds['crain'])
+# plt.colorbar()
+# plt.show()
 
 # 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng'
 # temp, visibility, wind gust speed, snow depth, precipitation rate, categorical rain,
@@ -46,6 +46,12 @@ df_prate = ds_prate.to_dataframe()
 
 ds_crain = ds.get('crain')
 df_crain = ds_crain.to_dataframe()
-print(df_crain.columns)
-for item in list(df_crain.values)[:3]:
+# print(df_crain.columns)
+# for item in list(df_crain.values)[:3]:
+#     print(item)
+
+ds_ltng = ds.get('ltng')
+df_ltng = ds_ltng.to_dataframe()
+print(df_ltng.columns)
+for item in list(df_ltng.values)[:3]:
     print(item)
