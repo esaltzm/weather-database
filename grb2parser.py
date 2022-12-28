@@ -4,6 +4,7 @@ import pandas as pd
 import datetime as dt
 import psycopg2
 import time
+from in_conus import in_us
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
@@ -53,18 +54,22 @@ try:
     cursor = connection.cursor()
     query = """INSERT INTO weather (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
     start = time.time()
+    count = 0
     for i, row in enumerate(rows):
         time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng = row
         record = (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng)
-        cursor.execute(query, record)
+        if in_us(latitude, longitude): 
+            cursor.execute(query, record)
+            count = count + 1
         connection.commit()
-        if i % 1000 == 0: print(i, 'records inserted successfully into table')
+        if i % 1000 == 0: print(f'{count} of {i} records inserted')
 
 except (Exception, psycopg2.Error) as error:
     print('Failed to insert record into mobile table', error)
 
 finally:
     print(f'--- %{time.time() - start} seconds ---')
+    print(f'{count} out of {len(rows)} records were inserted into the database')
     if connection:
         cursor.close()
         connection.close()
