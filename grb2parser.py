@@ -28,6 +28,13 @@ df_vis = ds_vis.to_dataframe()
 
 ds_gust = ds.get('gust')
 df_gust = ds_gust.to_dataframe()
-print(df_gust.columns)
-for item in list(df_gust.values)[:3]:
+# print(df_gust.columns)
+# for item in list(df_gust.values)[:3]:
+#     print(item)
+
+ds_sde = ds.get('sde')
+df_sde = ds_sde.to_dataframe()
+print(df_sde.columns)
+for item in list(df_sde.values)[:3]:
     print(item)
+
