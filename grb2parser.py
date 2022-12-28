@@ -8,15 +8,8 @@ ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgr
 # plt.colorbar()
 # plt.show()
 
-# 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng'
-# temp, visibility, wind gust speed, snow depth, precipitation rate, categorical rain, lightning
-
 ds_t = ds.get('t')
 df = ds_t.to_dataframe()
-shift_longitude = lambda lon: (lon - 360) if (lon > 180) else lon 
-convert_temp = lambda t: t - 273.15 # K to C
-df['longitude'] = df['longitude'].apply(shift_longitude)
-df['t'] = df['t'].apply(convert_temp)
 
 for var in ['vis', 'gust', 'sde', 'prate', 'crain', 'ltng']:
     ds_var = ds.get(var)
@@ -25,9 +18,16 @@ for var in ['vis', 'gust', 'sde', 'prate', 'crain', 'ltng']:
 
 df.drop(columns=['step', 'surface'])
 df = df.rename(columns={'time': 'time_start', 'valid_time': 'time_stop'})
-cols = ['time_start', 'time_stop', 'latitude', 'longitude', 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng']
+cols = ['time_start', 'time_stop', 'latitude', 'longitude', 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng'] # temp, visibility, wind gust speed, snow depth, precipitation rate, categorical rain, lightning
 df = df[cols]
-print(df.columns)
-for item in list(df.values)[:3]:
-    print(item)
-print(df.dtypes)
+
+shift_longitude = lambda lon: (lon - 360) if (lon > 180) else lon # 0, 360 to -180, 180
+convert_temp = lambda t: t - 273.15 # K to C
+convert_time = lambda t: int(t.timestamp()) # pd.datetime64 to unix (s since 1970)
+
+df['longitude'] = df['longitude'].apply(shift_longitude)
+df['t'] = df['t'].apply(convert_temp)
+df['time_start'] = df['time_start'].apply(convert_time)
+df['time_stop'] = df['time_stop'].apply(convert_time)
+
+print(df.tail())
