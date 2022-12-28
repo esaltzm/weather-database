@@ -1,5 +1,6 @@
 import xarray as xr
 import matplotlib.pyplot as plt
+import pandas as pd
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgrib", filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
@@ -8,24 +9,20 @@ ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgr
 # plt.show()
 
 # 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng'
-# temp, visibility, wind gust speed, snow depth, precipitation rate, categorical rain,
+# temp, visibility, wind gust speed, snow depth, precipitation rate, categorical rain, lightning
 
 ds_t = ds.get('t')
-df_t = ds_t.to_dataframe()
-# print(df_temp.columns)
+df = ds_t.to_dataframe()
 shift_longitude = lambda lon: (lon - 360) if (lon > 180) else lon 
 convert_temp = lambda t: t - 273.15 # K to C
-df_t['longitude'] = df_t['longitude'].apply(shift_longitude)
-df_t['t'] = df_t['t'].apply(convert_temp)
-# for item in list(df_temp.values)[:3]:
-#     print(item)
-
-var_dfs = {'df_t': df_t}
+df['longitude'] = df['longitude'].apply(shift_longitude)
+df['t'] = df['t'].apply(convert_temp)
 
 for var in ['vis', 'gust', 'sde', 'prate', 'crain', 'ltng']:
     ds_var = ds.get(var)
     df_var = ds_var.to_dataframe()
-    var_dfs['df_' + var] = df_var
+    df = pd.merge(df, df_var[var], left_index=True, right_index=True, how='outer')
 
-print(var_dfs)
-
+print(df.columns)
+for item in list(df.values)[:3]:
+    print(item)
