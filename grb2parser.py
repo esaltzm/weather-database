@@ -23,6 +23,11 @@ for var in ['vis', 'gust', 'sde', 'prate', 'crain', 'ltng']:
     df_var = ds_var.to_dataframe()
     df = pd.merge(df, df_var[var], left_index=True, right_index=True, how='outer')
 
+df.drop(columns=['step', 'surface'])
+df = df.rename(columns={'time': 'time_start', 'valid_time': 'time_stop'})
+cols = ['time_start', 'time_stop', 'latitude', 'longitude', 't', 'vis', 'gust', 'sde', 'prate', 'crain', 'ltng']
+df = df[cols]
 print(df.columns)
 for item in list(df.values)[:3]:
     print(item)
+print(df.dtypes)
