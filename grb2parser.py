@@ -14,5 +14,11 @@ ds = ds.get('t')
 df = ds.to_dataframe()
 print(type(df))
 print(df.columns)
+# for item in list(df.values)[:3]:
+#     print(item)
+shift_longitude = lambda lon: (lon - 360) if (lon > 180) else lon
+convert_temp = lambda t: 1.8 * (t - 273) + 32
+df['longitude'] = df['longitude'].apply(shift_longitude)
+df['t'] = df['t'].apply(convert_temp)
 for item in list(df.values)[:3]:
     print(item)
