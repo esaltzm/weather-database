@@ -1,7 +1,9 @@
 import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
+import datetime as dt
 import psycopg2
+import time
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
@@ -50,19 +52,19 @@ try:
                                   database='weather')
     cursor = connection.cursor()
     query = """INSERT INTO weather (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-    for row in rows:
+    start = time.time()
+    for i, row in enumerate(rows):
         time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng = row
         record = (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng)
         cursor.execute(query, record)
         connection.commit()
-        count = cursor.rowcount
-        print(count, 'Record inserted successfully into mobile table')
+        if i % 1000 == 0: print(i, 'records inserted successfully into table')
 
 except (Exception, psycopg2.Error) as error:
     print('Failed to insert record into mobile table', error)
 
 finally:
-    # closing database connection.
+    print(f'--- %{time.time() - start} seconds ---')
     if connection:
         cursor.close()
         connection.close()
