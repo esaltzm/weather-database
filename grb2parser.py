@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgrib", filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
-plt.contourf(ds['prate'])
+plt.contourf(ds['crain'])
 plt.colorbar()
 plt.show()
 
@@ -40,7 +40,12 @@ df_sde = ds_sde.to_dataframe()
 
 ds_prate = ds.get('prate')
 df_prate = ds_prate.to_dataframe()
-print(df_prate.columns)
-for item in list(df_prate.values)[:3]:
-    print(item)
+# print(df_prate.columns)
+# for item in list(df_prate.values)[:3]:
+#     print(item)
 
+ds_crain = ds.get('crain')
+df_crain = ds_crain.to_dataframe()
+print(df_crain.columns)
+for item in list(df_crain.values)[:3]:
+    print(item)
