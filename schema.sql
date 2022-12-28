@@ -1,7 +1,7 @@
-CREATE TABLE weathertable(
+CREATE TABLE weather(
     id          SERIAL PRIMARY KEY,
-    time_start  TIMESTAMP,
-    time_stop   TIMESTAMP,
+    time_start  INT,
+    time_stop   INT,
     latitude    NUMERIC(9),
     longitude   NUMERIC(9),
     t           NUMERIC(4),

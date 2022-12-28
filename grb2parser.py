@@ -1,9 +1,9 @@
 import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
-import psycopg2 as ps
+import psycopg2
 
-ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine="cfgrib", filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
+ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 
 # plt.contourf(ds['crain'])
 # plt.colorbar()
@@ -37,7 +37,33 @@ df['vis'] = df['vis'].apply(round_var)
 df['crain'] = df['crain'].apply(bool_var)
 df['ltng'] = df['ltng'].apply(bool_var)
 
-print(df.head())
-print(df.tail())
+# print(df.head())
+# print(df.tail())
 
-print('length: ', len(df))
+rows = df.values.tolist()
+
+try:
+    connection = psycopg2.connect(user='esaltzm',
+                                  password='password',
+                                  host='127.0.0.1',
+                                  port='5432',
+                                  database='weather')
+    cursor = connection.cursor()
+    query = """INSERT INTO weather (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    for row in rows:
+        time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng = row
+        record = (time_start, time_stop, latitude, longitude, t, vis, gust, sde, prate, crain, ltng)
+        cursor.execute(query, record)
+        connection.commit()
+        count = cursor.rowcount
+        print(count, 'Record inserted successfully into mobile table')
+
+except (Exception, psycopg2.Error) as error:
+    print('Failed to insert record into mobile table', error)
+
+finally:
+    # closing database connection.
+    if connection:
+        cursor.close()
+        connection.close()
+        print('PostgreSQL connection is closed')
