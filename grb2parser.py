@@ -29,6 +29,7 @@ shift_longitude = lambda lon: lon - 360 if lon > 180 else lon # 0, 360 to -180, 
 convert_temp = lambda t: t - 273.15 # K to C
 convert_time = lambda t: int(t.timestamp()) # pd.datetime64 to unix (s since 1970)
 round_var = lambda v: round(v)
+round_two = lambda n: round(n, 2)
 bool_var = lambda v: True if v > 0.5 else False
 
 
@@ -37,6 +38,10 @@ df['t'] = df['t'].apply(convert_temp)
 df['time_start'] = df['time_start'].apply(convert_time)
 df['time_stop'] = df['time_stop'].apply(convert_time)
 df['vis'] = df['vis'].apply(round_var)
+df['t'] = df['t'].apply(round_two)
+df['gust'] = df['gust'].apply(round_two)
+df['sde'] = df['sde'].apply(round_two)
+df['prate'] = df['prate'].apply(round_two)
 df['crain'] = df['crain'].apply(bool_var)
 df['ltng'] = df['ltng'].apply(bool_var)
 
@@ -68,7 +73,7 @@ except (Exception, psycopg2.Error) as error:
     print('Failed to insert record into table', error)
 
 finally:
-    print(f'--- %{time.time() - start} seconds ---')
+    print(f'--- {time.time() - start} seconds runtime ---')
     print(f'{count} out of {len(rows)} records were inserted into the database')
     if connection:
         cursor.close()

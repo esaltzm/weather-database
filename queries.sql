@@ -24,3 +24,8 @@ UNION ALL
 
 (SELECT latitude, longitude, (point(57.05223939873137, -135.32788472043092) <@> point(latitude, longitude)) AS distance, 'sitka, alaska' AS "from" FROM weather ORDER BY distance LIMIT 1);
 -- closest point to sitka, alaska
+
+
+
+SELECT pg_size_pretty( pg_database_size('weather') );
+-- db size in mb
