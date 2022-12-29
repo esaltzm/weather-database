@@ -4,10 +4,9 @@ CREATE TABLE weather(
     latitude    NUMERIC(8, 5),
     longitude   NUMERIC(8, 5),
     t           REAL,
-    vis         INT,
     gust        REAL,
     sde         REAL,
     prate       REAL,
-    crain       BOOLEAN,
-    ltng        BOOLEAN
+    crain       BIT,
+    ltng        BIT
 );
