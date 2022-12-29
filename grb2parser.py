@@ -4,7 +4,7 @@ import pandas as pd
 import datetime as dt
 import psycopg2
 import time
-from in_conus import in_us
+from in_conus import *
 
 ds = xr.open_dataset('./grb2_files/rap_130_20221220_0000_001.grb2', engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'})
 

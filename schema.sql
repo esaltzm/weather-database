@@ -4,11 +4,11 @@ CREATE TABLE weather(
     time_stop   INT,
     latitude    NUMERIC(8, 5),
     longitude   NUMERIC(8, 5),
-    t           NUMERIC(4, 2),
+    t           REAL,
     vis         INT,
-    gust        NUMERIC(4, 2),
-    sde         NUMERIC(4, 2),
-    prate       NUMERIC(4, 2),
+    gust        REAL,
+    sde         REAL,
+    prate       REAL,
     crain       BOOLEAN,
     ltng        BOOLEAN
 );
