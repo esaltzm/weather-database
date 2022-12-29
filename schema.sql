@@ -1,5 +1,4 @@
 CREATE TABLE weather(
-    id          SERIAL PRIMARY KEY,
     time_start  INT,
     time_stop   INT,
     latitude    NUMERIC(8, 5),
