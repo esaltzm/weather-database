@@ -65,7 +65,7 @@ try:
         if i % 1000 == 0: print(f'{count} of {i} records inserted')
 
 except (Exception, psycopg2.Error) as error:
-    print('Failed to insert record into mobile table', error)
+    print('Failed to insert record into table', error)
 
 finally:
     print(f'--- %{time.time() - start} seconds ---')

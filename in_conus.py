@@ -23,3 +23,6 @@ def in_us(lat, lon):
         if state.contains(p):
             return True
     return False
+
+print(in_us(51.45074, -138.33712))
+print(in_us(55.08338, -57.57953))
