@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS weather;
 CREATE TABLE weather(
     time_start  INT,
     time_stop   INT,
@@ -7,6 +8,6 @@ CREATE TABLE weather(
     gust        REAL,
     sde         REAL,
     prate       REAL,
-    crain       BIT,
-    ltng        BIT
-);
+    crain       BOOLEAN,
+    ltng        BOOLEAN
+) ENGINE=MyISAM;

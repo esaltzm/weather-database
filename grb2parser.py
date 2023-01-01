@@ -2,10 +2,13 @@ import xarray as xr
 import matplotlib.pyplot as plt
 import pandas as pd
 import datetime as dt
-import psycopg2
 import time
 import os
+import mysql.connector as database
 from in_conus import *
+from dotenv import dotenv_values
+
+config = dotenv_values('.env')
 
 for filename in os.listdir('./grb2_files'):
 
@@ -28,7 +31,7 @@ for filename in os.listdir('./grb2_files'):
     convert_temp = lambda t: t - 273.15 # K to C
     convert_time = lambda t: int(t.timestamp()) # pd.datetime64 to unix (s since 1970)
     round_var = lambda v: round(v)
-    bit_var = lambda v: '1' if v > 0.5 else '0'
+    bit_var = lambda v: True if v > 0.5 else False
 
     df['longitude'] = df['longitude'].apply(shift_longitude)
     df['t'] = df['t'].apply(convert_temp)
@@ -38,17 +41,13 @@ for filename in os.listdir('./grb2_files'):
     df['ltng'] = df['ltng'].apply(bit_var)
 
     rows = df.values.tolist()
+    connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host='', database="weather")
+    cursor = connection.cursor()
+    query = """INSERT INTO weather (time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    start = time.time()
+    count = 0
 
     try:
-        connection = psycopg2.connect(user='esaltzm',
-                                    password='password',
-                                    host='127.0.0.1',
-                                    port='5432',
-                                    database='weather')
-        cursor = connection.cursor()
-        query = """INSERT INTO weather (time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        start = time.time()
-        count = 0
         for i, row in enumerate(rows):
             time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng = row
             record = (time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng)
@@ -57,14 +56,12 @@ for filename in os.listdir('./grb2_files'):
                 count = count + 1
             connection.commit()
             if i % 1000 == 0: print(f'{count} of {i} records inserted')
-
-    except (Exception, psycopg2.Error) as error:
+    except database.Error as error:
         print('Failed to insert record into table', error)
-
     finally:
         print(f'--- {time.time() - start} seconds runtime ---')
         print(f'{count} out of {len(rows)} records were inserted into the database')
         if connection:
             cursor.close()
             connection.close()
-            print('PostgreSQL connection is closed')
+            print('MySQL connection is closed')

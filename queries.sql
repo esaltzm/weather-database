@@ -29,3 +29,11 @@ UNION ALL
 
 SELECT pg_size_pretty( pg_database_size('weather') );
 -- db size in mb
+
+SELECT 
+    table_name AS `Table`, 
+    round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
+FROM information_schema.TABLES 
+WHERE table_schema = "weather"
+    AND table_name = "weather";
+-- db size in mb (mariadb)
