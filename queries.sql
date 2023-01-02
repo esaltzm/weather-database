@@ -37,3 +37,10 @@ FROM information_schema.TABLES
 WHERE table_schema = "weather"
     AND table_name = "weather";
 -- db size in mb (mariadb)
+
+CREATE INDEX time_lat ON weather (time_stop, latitude);
+DROP INDEX time_lat ON weather; 
+
+SELECT * FROM weather WHERE latitude > 37 AND latitude < 41 AND longitude > -109 AND longitude < -102 AND time_stop < 1671498000 ORDER BY t LIMIT 10;
+
+SELECT UNIQUE FROM_UNIXTIME(time_start, '%Y-%m-%d %h:%i %p') FROM weatherindex ORDER BY time_start;

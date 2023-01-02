@@ -13,10 +13,9 @@ CREATE TABLE weather(
 ) ENGINE=MyISAM;
 
 
-
-CREATE TABLE `weather`.`weather2` (
+DROP TABLE IF EXISTS weatherindex;
+CREATE TABLE weatherindex (
     time_start  INT,
-    time_stop   INT,
     latitude    NUMERIC(8, 5),
     longitude   NUMERIC(8, 5),
     t           REAL,
@@ -24,8 +23,7 @@ CREATE TABLE `weather`.`weather2` (
     sde         REAL,
     prate       REAL,
     crain       BOOLEAN,
-    ltng        BOOLEAN
+    ltng        BOOLEAN,
+    INDEX time_lat (time_start, latitude)
 )
-ENGINE = MyISAM
-DATA DIRECTORY = '/Volumes/Untitled/mysql'
-INDEX DIRECTORY = '/Volumes/Untitled/mysql';
+ENGINE = MyISAM;
