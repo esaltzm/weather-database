@@ -35,12 +35,13 @@ SELECT
     round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
 FROM information_schema.TABLES 
 WHERE table_schema = "weather"
-    AND table_name = "weather";
+    AND table_name = "weatherindex";
 -- db size in mb (mariadb)
 
 CREATE INDEX time_lat ON weather (time_stop, latitude);
 DROP INDEX time_lat ON weather; 
 
-SELECT * FROM weather WHERE latitude > 37 AND latitude < 41 AND longitude > -109 AND longitude < -102 AND time_stop < 1671498000 ORDER BY t LIMIT 10;
+SELECT * FROM weatherindex WHERE latitude > 37 AND latitude < 41 AND longitude > -109 AND longitude < -102 AND time_start >= 1640898000 AND time_start <= 1640908800;
 
-SELECT UNIQUE FROM_UNIXTIME(time_start, '%Y-%m-%d %h:%i %p') FROM weatherindex ORDER BY time_start;
+SELECT UNIQUE time_start FROM weatherindex ORDER BY time_start;
+select * from weatherindex where prate > 0 order by t asc limit 10;

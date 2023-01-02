@@ -13,8 +13,8 @@ CREATE TABLE weather(
 ) ENGINE=MyISAM;
 
 
-DROP TABLE IF EXISTS weatherindex;
-CREATE TABLE weatherindex (
+DROP TABLE IF EXISTS weather;
+CREATE TABLE weather (
     time_start  INT,
     latitude    NUMERIC(8, 5),
     longitude   NUMERIC(8, 5),
