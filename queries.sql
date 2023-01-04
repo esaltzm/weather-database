@@ -50,3 +50,7 @@ select * from weatherindex where prate > 0 order by t asc limit 10;
 SELECT weather, (data_length + index_length)/1073741824 AS size_gb
 FROM information_schema.tables
 WHERE table_schema = 'weather_db' AND table_name = 'my_table';
+
+CREATE INDEX time ON weather (time_start);
+
+CREATE INDEX lat_long ON weather (latitude, longitude);
