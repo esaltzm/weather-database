@@ -65,7 +65,7 @@ def write_to_db(rows, cursor):
         print(f'{count} out of {len(rows)} records were inserted into the database')
 
 
-connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], port=3306, database='weather_db')
+connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather_db')
 cursor = connection.cursor()
 
 for folder in sorted(os.listdir(path)):
@@ -76,8 +76,8 @@ for folder in sorted(os.listdir(path)):
             if int(hour) % 3 == 0: # add every 3rd hour to db
                 rows = extract_data(path, folder, filename)
                 write_to_db(rows, cursor)
-
+                
 if connection:
     cursor.close()
     connection.close()
-    print('MySQL connection is closed\n')
+    print('MySQL connection is closed')

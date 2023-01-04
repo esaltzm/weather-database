@@ -32,16 +32,21 @@ SELECT pg_size_pretty( pg_database_size('weather') );
 
 SELECT 
     table_name AS `Table`, 
-    round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB` 
+    round(((data_length + index_length) / 1024 / 1024 / 1000), 2) `Size in GB` 
 FROM information_schema.TABLES 
-WHERE table_schema = "weather"
-    AND table_name = "weatherindex";
+WHERE table_schema = "weather_db"
+    AND table_name = "weather";
 -- db size in mb (mariadb)
 
 CREATE INDEX time_lat ON weather (time_stop, latitude);
 DROP INDEX time_lat ON weather; 
 
-SELECT * FROM weatherindex WHERE latitude > 37 AND latitude < 41 AND longitude > -109 AND longitude < -102 AND time_start >= 1640898000 AND time_start <= 1640908800;
+SELECT * FROM weather WHERE latitude > 37 AND latitude < 41 AND longitude > -109 AND longitude < -102 AND time_start = 1641762000;
 
-SELECT UNIQUE time_start FROM weatherindex ORDER BY time_start;
+SELECT UNIQUE time_start FROM weather ORDER BY time_start;
 select * from weatherindex where prate > 0 order by t asc limit 10;
+
+--index size in gb
+SELECT weather, (data_length + index_length)/1073741824 AS size_gb
+FROM information_schema.tables
+WHERE table_schema = 'weather_db' AND table_name = 'my_table';
