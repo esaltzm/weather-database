@@ -54,3 +54,21 @@ WHERE table_schema = 'weather_db' AND table_name = 'my_table';
 CREATE INDEX time ON weather (time_start);
 
 CREATE INDEX lat_long ON weather (latitude, longitude);
+
+DROP INDEX time ON weather;
+
+alter table weather add index 'time_long_lat' (time_start, longitude, latitude);
+
+CREATE INDEX time_long_lat ON weather (time_start, longitude, latitude),
+ALGORITHM=INPLACE,
+LOCK=NONE;
+
+alter table weather add index time_long_lat (time_start, longitude, latitude),
+ALGORITHM=INPLACE,
+LOCK=NONE;
+
+
+ALTER TABLE weather MODIFY sde FLOAT;
+ALTER TABLE weather MODIFY prate FLOAT;
+ALTER TABLE weather MODIFY gust FLOAT;
+ALTER TABLE weather MODIFY t FLOAT;
