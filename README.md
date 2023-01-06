@@ -17,8 +17,12 @@ Here is the first image I received after processing the data (using matplotlib),
 - [Amazon Web Services RDS](https://aws.amazon.com/rds/features/)
 - [Selenium](https://www.selenium.dev/documentation/) - future feature (using Node JS)
 
-## Features
-- Indices - one on time, another composite index on latitude and longitude (sped sample query from 13s to 300ms)!
+## Database Features
+- I used MyISAM over the InnoDB engine because even though it is older and less performant on queries, it uses less disk space than InnoDB
+![sql query showing db attributes](https://i.imgur.com/581rZy7.png)
+
+- Here is how the data is laid out in the table
+![sql query showing first row of table](https://i.imgur.com/WRUglTB.png)
 
 ## Code Snippets
 
