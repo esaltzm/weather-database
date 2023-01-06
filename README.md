@@ -8,14 +8,14 @@ Here is the first image I received after processing the data (using matplotlib),
 
 ## Technologies Used
 
-- Python
+- Python + Shell
 - [xarray](https://docs.xarray.dev/en/stable/)
 - [pandas](https://pandas.pydata.org/about/index.html)
 - [matplotlib](https://matplotlib.org/)
 - [shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 - [MariaDB](https://mariadb.org/about/) - chose this over MySQL because it's open source
 - [Amazon Web Services RDS](https://aws.amazon.com/rds/features/)
-- [Selenium](https://www.selenium.dev/documentation/) - future feature
+- [Selenium](https://www.selenium.dev/documentation/) - future feature (using Node JS)
 
 ## Features
 - Indices - one on time, another composite index on latitude and longitude (sped sample query from 13s to 300ms)!
