@@ -72,3 +72,5 @@ ALTER TABLE weather MODIFY sde FLOAT;
 ALTER TABLE weather MODIFY prate FLOAT;
 ALTER TABLE weather MODIFY gust FLOAT;
 ALTER TABLE weather MODIFY t FLOAT;
+
+SELECT DATA_TYPE from INFORMATION_SCHEMA. COLUMNS where table_schema = 'weather_db' and table_name = 'weather';

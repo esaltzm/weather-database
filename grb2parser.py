@@ -42,7 +42,7 @@ def extract_data(path, folder, filename):
 
 def write_to_db(rows, cursor):
 
-    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, crain, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
     start = time.time()
     count = 0
 
@@ -52,7 +52,7 @@ def write_to_db(rows, cursor):
         time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng = row
         time_start = time_stop
         if not in_us(latitude, longitude) and latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375: # AND in default bounding box
-            records.append((time_start, latitude, longitude, t, gust, sde, prate, crain, ltng))
+            records.append((time_start, latitude, longitude, t, gust, sde, prate, ltng))
 
     count = len(records)
 
