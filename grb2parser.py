@@ -48,16 +48,17 @@ def write_to_db(rows, cursor):
 
     records = []
 
-    for row in rows[19000:121000]: # this range contains CONUS coords
+    for row in rows[9000:129000]: # this range contains bounding box coords
         time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng = row
         time_start = time_stop
-        if in_us(latitude, longitude):
+        if not in_us(latitude, longitude) and latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375: # AND in default bounding box
             records.append((time_start, latitude, longitude, t, gust, sde, prate, crain, ltng))
 
     count = len(records)
 
     try:
         cursor.executemany(query, records)
+        print(len(records), 'inserted')
     except database.Error as error:
         print('Failed to insert record into table', error)
     finally:
