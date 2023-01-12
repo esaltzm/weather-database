@@ -42,7 +42,7 @@ def extract_data(path, folder, filename):
 
 def write_to_db(rows, cursor):
 
-    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
     start = time.time()
     count = 0
 
