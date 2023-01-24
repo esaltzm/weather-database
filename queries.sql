@@ -74,3 +74,8 @@ ALTER TABLE weather MODIFY gust FLOAT;
 ALTER TABLE weather MODIFY t FLOAT;
 
 SELECT DATA_TYPE from INFORMATION_SCHEMA. COLUMNS where table_schema = 'weather_db' and table_name = 'weather';
+
+aws rds modify-db-instance \
+    --db-instance-identifier weather-db \
+    --allocated-storage 25 \
+    --apply-immediately

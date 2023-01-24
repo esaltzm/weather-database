@@ -73,10 +73,12 @@ for folder in sorted(os.listdir(path)):
     if os.path.isdir(os.path.join(path, folder)):
         print(f'Parsing folder: {folder}')
         for filename in sorted(os.listdir('/Volumes/Untitled/grb2_files/' + folder)):
-            hour = filename.split('.')[0][-2:]
-            if int(hour) % 3 == 0: # add every 3rd hour to db
-                rows = extract_data(path, folder, filename)
-                write_to_db(rows, cursor)
+            if filename != '.DS_Store':
+                hour = filename.split('.')[0][-2:]
+                print(hour)
+                if int(hour) % 3 == 0: # add every 3rd hour to db
+                    rows = extract_data(path, folder, filename)
+                    write_to_db(rows, cursor)
                 
 if connection:
     cursor.close()

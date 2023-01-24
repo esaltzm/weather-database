@@ -1,11 +1,41 @@
-const {Builder} = require('selenium-webdriver')
-const chrome = require('selenium-webdriver/chrome')
+const express = require('express')
+const { Builder, By, until, Key } = require('selenium-webdriver')
 
-let driver = new Builder()
-    .forBrowser('chrome')
-    .setChromeOptions(new chrome.Options().headless())
-    .build()
+const app = express()
+const port = 3000
 
-driver.get('https://www.ncei.noaa.gov/has/HAS.FileAppRouter?datasetname=RAP130&subqueryby=STATION&applname=&outdest=FILE')
+app.get('/', async (req, res) => {
+    try {
+        const data = await getFileNames()
+        res.status(200).json(data)
+    } catch (error) {
+        res.status(500).json({
+            message: 'Server error occurred',
+        })
+    }
+})
 
-driver.quit()
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`)
+})
+
+const getFileNames = async () => {
+    try {
+        driver = await new Builder().forBrowser('chrome').build()
+        await driver.get('https://www.ncei.noaa.gov/has/HAS.FileAppRouter?datasetname=RAP130&subqueryby=STATION&applname=&outdest=FILE')
+        let inputElement = await driver.findElement(By.name("emailadd"))
+        await inputElement.sendKeys("elisaltzman@gmail.com", Key.RETURN)
+        let submitButton = await driver.findElement(By.css(".HASButton:first-child"))
+        await submitButton.click()
+        await driver.sleep(5000)
+        const source = await driver.getPageSource()
+        const regex = new RegExp('HAS\\d+')
+        const match = source.match(regex)
+        let endUrl = 'http://www1.ncdc.noaa.gov/pub/has/model/' + match[0]
+        return endUrl
+    } catch (error) {
+        throw new Error(error)
+    } finally {
+        await driver.quit()
+    }
+}
