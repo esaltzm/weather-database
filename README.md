@@ -15,11 +15,14 @@ Here is the first image I received after processing the data (using matplotlib),
 - [shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 - [MariaDB](https://mariadb.org/about/) - chose this over MySQL because it's open source
 - [Amazon Web Services RDS](https://aws.amazon.com/rds/features/)
-- [Selenium](https://www.selenium.dev/documentation/) - future feature (using Node JS)
+- [Selenium](https://www.selenium.dev/documentation/) - future feature (using Node JS) EDIT 1/24 - Implemented basic web scraping, need to host and set it to run every day remotely and trigger Shell download + Python parsing
 
 ## Database Features
 - I used MyISAM over the InnoDB engine because even though it is older and less performant on queries, it uses less disk space than InnoDB
 ![sql query showing db attributes](https://i.imgur.com/581rZy7.png)
+
+- EDIT 1/24: After adding data from oceans and lakes to make the map visualization complete, here is the updated database information
+![updated database info](https://i.imgur.com/8sccC4Y.png)
 
 - Here is how the data is laid out in the table
 ![sql query showing first row of table](https://i.imgur.com/WRUglTB.png)
@@ -63,5 +66,6 @@ After multiple CREATE INDEX attempts failed due to running out of memory, I real
 ## Future Improvements
 - Currently, the database only has datapoints that lie within the continental U.S. (on land), which results in some distortion in the plots I used to visualize this data on the [frontend](https://github.com/esaltzm/skyscan-frontend/). I want to go back and add data for the surrounding oceans and Great Lakes so that when this frontend view is zoomed out, it has complete data to pass to the plot - right now, the plot shows data beyond the bounds of my database because it only generates rectangular plots: 
 ![plot of precip rate showing distortion out of bounds of conus](https://i.imgur.com/54JiYaG.png)
+EDIT 1/24 - Missing data has been added to the database - next step is limiting frontend viewport to only coordinates covered by updated area selection
 - I would love for this database to stay current, adding each day's new data to the database and removing the oldest day's data in a First In First Out cache. This would involve automating the download and parsing process - part of which is done, but the interactions with the NOAA data request web form would have to be automated using Selenium. I attempted this, but did not have the time to implement within the project week.
 
