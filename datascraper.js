@@ -1,5 +1,7 @@
 const express = require('express')
-const { Builder, By, until, Key } = require('selenium-webdriver')
+const { Builder, By, Key } = require('selenium-webdriver')
+const fs = require('fs')
+const request = require('request')
 
 const app = express()
 const port = 3000
@@ -31,7 +33,7 @@ const getFileNames = async () => {
         const source = await driver.getPageSource()
         const regex = new RegExp('HAS\\d+')
         const match = source.match(regex)
-        let endUrl = 'http://www1.ncdc.noaa.gov/pub/has/model/' + match[0]
+        let endUrl = 'http://www1.ncdc.noaa.gov/pub/has/model/' + match[0] + `/rap_130_${date}00.g2.tar`
         return endUrl
     } catch (error) {
         throw new Error(error)
