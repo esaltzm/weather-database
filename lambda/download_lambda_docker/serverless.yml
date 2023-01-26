@@ -1,0 +1,24 @@
+service: download-lambda-docker
+
+provider:
+  name: aws
+  stage: prod
+  region: us-east-1
+  ecr:
+    images:
+      img:
+        path: ./
+        platform: linux/amd64
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "arn:aws:s3:::noaaweatherdatadaily/*"
+
+functions:
+  download:
+    timeout: 300
+    memorySize: 1024
+    image:
+      name: img
