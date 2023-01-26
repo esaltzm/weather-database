@@ -58,15 +58,15 @@ def handler(event=None, context=None):
     counter = 0
     while counter < 30:
         try:
-            os.system(f'curl -o /tmp/file.tar {file_url}')
+            os.system(f'curl -o /tmp/file.g2.tar {file_url}')
             break
         except Exception as e:
             print(f'{e} - waiting 5 seconds before trying again.')
             time.sleep(5)
             counter += 1
     print('downloaded .g2.tar')
-    s3.upload_file('/tmp/file.tar', 'noaaweatherdatadaily', 'file.tar')
+    s3.upload_file('/tmp/file.g2.tar', 'noaaweatherdatadaily', 'file.g2.tar')
     print('uploaded to s3')
-    os.remove('/tmp/file.tar')
+    os.remove('/tmp/file.g2.tar')
     print('unzipped and removed')
     driver.quit()

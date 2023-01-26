@@ -12,13 +12,15 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "s3:PutObject"
-        - "s3:PutObjectAcl"
-      Resource: "arn:aws:s3:::noaaweatherdatadaily/*"
+      - "s3:*"
+      Resource: [
+        "arn:aws:s3:::noaaweatherdatadaily",
+        "arn:aws:s3:::noaaweatherdatadaily/*"
+      ]
 
 functions:
   download:
-    timeout: 300
+    timeout: 360
     memorySize: 1024
     image:
       name: img

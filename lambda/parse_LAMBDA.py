@@ -1,19 +1,18 @@
 import time
 import os
+import tarfile
 import xarray as xr
 import pandas as pd
 import boto3
 import mysql.connector as database
-from in_conus import *
 from dotenv import dotenv_values
 
 config = dotenv_values('.env')
-path = '/Volumes/Untitled/grb2_files'
 
-def extract_data(path, folder, filename):
+def extract_data(filename):
 
     print(f'Parsing file: {filename}')
-    ds = xr.open_dataset(os.path.join(path, folder) + '/' + filename, engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'}, backend_kwargs={'indexpath': ''})
+    ds = xr.open_dataset(filename, engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'}, backend_kwargs={'indexpath': ''})
     ds_t = ds.get('t')
     df = ds_t.to_dataframe()
 
@@ -43,16 +42,16 @@ def extract_data(path, folder, filename):
 
 def write_to_db(rows, cursor):
 
-    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+    query = """INSERT INTO automation (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
     start = time.time()
     count = 0
 
     records = []
 
-    for row in rows[9000:129000]: # this range contains bounding box coords
+    for row in rows[8000:130000]: # this range contains bounding box coords
         time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng = row
         time_start = time_stop
-        if not in_us(latitude, longitude) and latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375: # AND in default bounding box
+        if latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375:
             records.append((time_start, latitude, longitude, t, gust, sde, prate, ltng))
 
     count = len(records)
@@ -68,22 +67,38 @@ def write_to_db(rows, cursor):
 
 
 def lambda_handler(event, context):
-    if(my_s3_bucket is empty):
-        return 'bucket is empty, parsing complete'
-    elif(my_s3_bucket contains file.tar):
-        unzip file.tar
-        delete file.tar
-    else:
-        connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather_db')
-        cursor = connection.cursor()
-        filename = first file in s3 bucket
-        hour = filename.split('.')[0][-2:]
-        print(hour)
-        if int(hour) % 3 == 0: # add every 3rd hour to db
-            rows = extract_data(path, folder, filename)
-            write_to_db(rows, cursor)
+    s3 = boto3.client('s3')
+    lambda_client = boto3.client('lambda')
+    bucket_name = 'noaaweatherdatadaily'
+    try:
+        objects = s3.list_objects(Bucket=bucket_name)
+        if not objects['Contents']:
+            return 'Bucket is empty'
         else:
-            delete filename from s3 bucket
-        cursor.close()
-        connection.close()
-        print('MySQL connection is closed')
+            obj = objects['Contents'][0]
+            key = obj['Key']
+            if key.endswith('.tar'):
+                s3.download_file(bucket_name, key, '/tmp/file.tar')
+                with tarfile.open('/tmp/file.tar', 'r') as tar:
+                    tar.extractall('/tmp')
+                os.remove('/tmp/file.tar')
+                print('unzipped and deleted tar file locally')
+            else:
+                return '.tar file not found'
+            connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather_db')
+            cursor = connection.cursor()
+            for filename in os.listdir('/tmp'):
+                print(f'filename: {filename}')
+                filename = key.split('/')[-1]
+                hour = filename.split('.')[0][-2:]
+                print(f'hour: {hour}')
+                if int(hour) % 3 == 0: # add every 3rd hour to db
+                    rows = extract_data('/tmp/' + filename)
+                    write_to_db(rows, cursor)
+            cursor.close()
+            connection.close()
+            print('MySQL connection is closed')
+            s3.delete_object(Bucket=bucket_name, Key=key)
+            print('.tar file deleted')
+    except Exception as e:
+        return f'exception occurred: {e}'
