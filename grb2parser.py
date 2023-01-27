@@ -7,7 +7,7 @@ from in_conus import *
 from dotenv import dotenv_values
 
 config = dotenv_values('.env')
-path = '/Volumes/Untitled/grb2_files'
+path = '/Volumes/Untitled/grb2_files_NEW'
 
 def extract_data(path, folder, filename):
 
@@ -48,10 +48,10 @@ def write_to_db(rows, cursor):
 
     records = []
 
-    for row in rows[9000:129000]: # this range contains bounding box coords
+    for row in rows[8000:130000]: # this range contains bounding box coords
         time_start, time_stop, latitude, longitude, t, gust, sde, prate, crain, ltng = row
         time_start = time_stop
-        if not in_us(latitude, longitude) and latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375: # AND in default bounding box
+        if latitude >= 22.262387 and latitude <= 50.648574 and longitude >= -127.640625 and longitude <= -64.359375: # AND in default bounding box
             records.append((time_start, latitude, longitude, t, gust, sde, prate, ltng))
 
     count = len(records)
@@ -72,7 +72,7 @@ cursor = connection.cursor()
 for folder in sorted(os.listdir(path)):
     if os.path.isdir(os.path.join(path, folder)):
         print(f'Parsing folder: {folder}')
-        for filename in sorted(os.listdir('/Volumes/Untitled/grb2_files/' + folder)):
+        for filename in sorted(os.listdir('/Volumes/Untitled/grb2_files_NEW/' + folder)):
             if filename != '.DS_Store':
                 hour = filename.split('.')[0][-2:]
                 print(hour)
