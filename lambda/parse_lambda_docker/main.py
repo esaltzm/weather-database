@@ -10,17 +10,19 @@ import mysql.connector as database
 def extract_data(filename):
 
     print(f'Parsing file: {filename}')
+    ds_t = xr.open_dataset(filename, engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'heightAboveGround', 'level': 2}, backend_kwargs={'indexpath': ''})
+    ds_t2m = ds_t.get('t2m')
+    df = ds_t2m.to_dataframe()
+
     ds = xr.open_dataset(filename, engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'surface'}, backend_kwargs={'indexpath': ''})
-    ds_t = ds.get('t')
-    df = ds_t.to_dataframe()
 
     for var in ['gust', 'sde', 'prate', 'crain', 'ltng']:
         ds_var = ds.get(var)
         df_var = ds_var.to_dataframe()
         df = pd.merge(df, df_var[var], left_index=True, right_index=True, how='outer')
 
-    df.drop(columns=['step', 'surface'])
-    df = df.rename(columns={'time': 'time_start', 'valid_time': 'time_stop'})
+    df.drop(columns=['step', 'heightAboveGround'], axis=1, inplace=True)
+    df = df.rename(columns={'time': 'time_start', 'valid_time': 'time_stop', 't2m': 't'})
     cols = ['time_start', 'time_stop', 'latitude', 'longitude', 't', 'gust', 'sde', 'prate', 'crain', 'ltng'] # temp, wind gust speed, snow depth, precipitation rate, categorical rain, lightning
     df = df[cols]
 
@@ -79,34 +81,33 @@ def handler(event=None, context=None):
     s3 = boto3.client('s3')
     bucket_name = 'noaaweatherdatadaily'
     objects = s3.list_objects(Bucket=bucket_name)
-    if not objects['Contents']:
-        return 'Bucket is empty'
+    try: objects['Contents']
+    except: return 'Bucket is empty'
+    print('bucket not empty')
+    obj = objects['Contents'][0]
+    key = obj['Key']
+    if key.endswith('.tar'):
+        print('found tar file')
+        s3.download_file(bucket_name, key, '/tmp/file.tar')
+        with tarfile.open('/tmp/file.tar', 'r') as tar:
+            tar.extractall('/tmp')
+        os.remove('/tmp/file.tar')
+        print('unzipped and deleted tar file locally')
     else:
-        print('bucket not empty')
-        obj = objects['Contents'][0]
-        key = obj['Key']
-        if key.endswith('.tar'):
-            print('found tar file')
-            s3.download_file(bucket_name, key, '/tmp/file.tar')
-            with tarfile.open('/tmp/file.tar', 'r') as tar:
-                tar.extractall('/tmp')
-            os.remove('/tmp/file.tar')
-            print('unzipped and deleted tar file locally')
-        else:
-            return '.tar file not found'
-        connection = database.connect(user=os.environ['USERNAME'], password=os.environ['PASSWORD'], host=os.environ['HOST'], database='weather_db')
-        cursor = connection.cursor()
-        for filename in os.listdir('/tmp'):
-            print(f'filename: {filename}')
-            hour = filename.split('.')[0][-2:]
-            print(f'hour: {hour}')
-            if int(hour) % 3 == 0: # add every 3rd hour to db
-                rows = extract_data('/tmp/' + filename)
-                write_to_db(rows, cursor)
-        cursor.close()
-        connection.close()
-        print('MySQL connection is closed')
-        s3.delete_object(Bucket=bucket_name, Key=key)
-        print('.tar file deleted')
-        clear_tmp()
-        print('tmp directory cleared')
+        return '.tar file not found'
+    connection = database.connect(user=os.environ['USERNAME'], password=os.environ['PASSWORD'], host=os.environ['HOST'], database='weather_db')
+    cursor = connection.cursor()
+    for filename in os.listdir('/tmp'):
+        print(f'filename: {filename}')
+        hour = filename.split('.')[0][-2:]
+        print(f'hour: {hour}')
+        if int(hour) % 3 == 0: # add every 3rd hour to db
+            rows = extract_data('/tmp/' + filename)
+            write_to_db(rows, cursor)
+    cursor.close()
+    connection.close()
+    print('MySQL connection is closed')
+    s3.delete_object(Bucket=bucket_name, Key=key)
+    print('.tar file deleted')
+    clear_tmp()
+    print('tmp directory cleared')
