@@ -8,14 +8,17 @@ Here is the first image I received after processing the data (using matplotlib),
 
 ## Technologies Used
 
-- Python + Shell
+- [AWS RDS](https://aws.amazon.com/rds/features/)
+- [AWS Lambda](https://aws.amazon.com/lambda/features/)
+- [AWS S3](https://aws.amazon.com/s3/features/)
+- [AWS CloudWatch](https://aws.amazon.com/cloudwatch/features/)
+- [Selenium](https://www.selenium.dev/documentation/)
+- [Docker](https://docs.docker.com/get-started/)
+- [MariaDB](https://mariadb.org/about/)
 - [xarray](https://docs.xarray.dev/en/stable/)
 - [pandas](https://pandas.pydata.org/about/index.html)
 - [matplotlib](https://matplotlib.org/)
 - [shapely](https://shapely.readthedocs.io/en/stable/manual.html)
-- [MariaDB](https://mariadb.org/about/) - chose this over MySQL because it's open source
-- [Amazon Web Services RDS](https://aws.amazon.com/rds/features/)
-- [Selenium](https://www.selenium.dev/documentation/) - future feature (using Node JS) EDIT 1/24 - Implemented basic web scraping, need to host and set it to run every day remotely and trigger Shell download + Python parsing
 
 ## Database Features
 - I used MyISAM over the InnoDB engine because even though it is older and less performant on queries, it uses less disk space than InnoDB
