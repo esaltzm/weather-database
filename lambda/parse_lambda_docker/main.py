@@ -104,6 +104,16 @@ def handler(event=None, context=None):
         if int(hour) % 3 == 0: # add every 3rd hour to db
             rows = extract_data('/tmp/' + filename)
             write_to_db(rows, cursor)
+    # remove earliest day of data
+    cursor.execute('SELECT UNIQUE time_start FROM weather ORDER BY time_start DESC LIMIT 1;')
+    latest_time = cursor.fetchone()[0]
+    print('latest time: ', latest_time)
+    delete_before = latest_time - (365 * 24 * 60 * 60) # one year earlier
+    print('will delete before: ', delete_before)
+    cursor.execute(f'SELECT UNIQUE time_start FROM weather WHERE time_start <= {delete_before} ORDER BY time_start DESC;')
+    # cursor.execute(f'DELETE FROM weather WHERE time_start <= {delete_before}')
+    deleted = cursor.fetchall()
+    print('will have deleted: ', deleted)
     cursor.close()
     connection.close()
     print('MySQL connection is closed')
