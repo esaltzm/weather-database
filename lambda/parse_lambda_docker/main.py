@@ -42,7 +42,7 @@ def extract_data(filename):
 
 def write_to_db(rows, cursor):
 
-    query = """INSERT INTO automation (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+    query = """INSERT INTO weather (time_start, latitude, longitude, t, gust, sde, prate, ltng) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
     start = time.time()
     count = 0
 
@@ -113,7 +113,7 @@ def handler(event=None, context=None):
     cursor.execute(f'SELECT UNIQUE time_start FROM weather WHERE time_start <= {delete_before} ORDER BY time_start DESC;')
     # cursor.execute(f'DELETE FROM weather WHERE time_start <= {delete_before}')
     deleted = cursor.fetchall()
-    print('will have deleted: ', deleted)
+    print('will have deleted: ', len(deleted), deleted)
     cursor.close()
     connection.close()
     print('MySQL connection is closed')
@@ -121,3 +121,4 @@ def handler(event=None, context=None):
     print('.tar file deleted')
     clear_tmp()
     print('tmp directory cleared')
+    return 'successfully parsed data and inserted into db'

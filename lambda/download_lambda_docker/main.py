@@ -70,3 +70,4 @@ def handler(event=None, context=None):
     os.remove('/tmp/file.g2.tar')
     print('unzipped and removed')
     driver.quit()
+    return 'downloaded latest data to s3 bucket'
