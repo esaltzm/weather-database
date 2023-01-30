@@ -81,9 +81,6 @@ def handler(event=None, context=None):
     s3 = boto3.client('s3')
     bucket_name = 'noaaweatherdatadaily'
     objects = s3.list_objects(Bucket=bucket_name)
-    try: objects['Contents']
-    except: return 'Bucket is empty'
-    print('bucket not empty')
     obj = objects['Contents'][0]
     key = obj['Key']
     if key.endswith('.tar'):
