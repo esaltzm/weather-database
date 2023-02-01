@@ -55,6 +55,17 @@ Here is the first image I received after processing the data (using matplotlib),
             records.append((time_start, latitude, longitude, t, gust, sde, prate, ltng))
         cursor.executemany(query, records)
 
+- Building ecCodes C library for use in my parsing Docker container and installing dependencies:
+
+            ENV ECCODES_URL=https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.10.0-Source.tar.gz?api=v2 \
+                ECCODES_VERSION=eccodes-2.10.0-Source
+            RUN cd /tmp && wget --output-document=${ECCODES_VERSION}.tar.gz ${ECCODES_URL} && tar -zxvf ${ECCODES_VERSION}.tar.gz
+            RUN ls
+            RUN cd /tmp/${ECCODES_VERSION} && mkdir build && cd build && \
+                cmake -DENABLE_FORTRAN=false -DPYTHON_LIBRARY_DIR=/usr/lib64/python3.6 -DPYTHON_INCLUDE_DIR=/usr/include/python3.6m -DPYTHON_EXECUTABLE=/usr/bin/python3  .. \
+                && make -j2 && make install
+            RUN pip install pandas xarray boto3 mysql.connector cfgrib eccodes
+
 ## Problems and Solutions
 
 ### Bulk Data Download
