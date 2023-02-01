@@ -11,7 +11,7 @@ path = '/Volumes/Untitled/TO_REDO/grb2_files_REDO'
 
 def extract_data(path, folder, filename):
 
-    print(f'\n\nParsing file: {filename}')
+    print(f'Parsing file: {filename}')
     ds_t = xr.open_dataset(os.path.join(path, folder) + '/' + filename, engine='cfgrib', filter_by_keys={'stepType': 'instant', 'typeOfLevel': 'heightAboveGround', 'level': 2}, backend_kwargs={'indexpath': ''})
     ds_t2m = ds_t.get('t2m')
     df = ds_t2m.to_dataframe()
@@ -61,9 +61,6 @@ def write_to_db(rows, cursor):
     count = len(records)
 
     try:
-        cursor.execute(f'SELECT COUNT(*) FROM automation WHERE time_start = {time_to_remove}')
-        print(f'overwriting {cursor.fetchone()[0]} records')
-        cursor.execute(f'DELETE FROM automation WHERE time_start = {time_to_remove}')
         cursor.executemany(insert_query, records)
         print(len(records), 'inserted')
     except database.Error as error:
@@ -73,16 +70,15 @@ def write_to_db(rows, cursor):
         print(f'{count} out of {len(rows)} records were inserted into the database')
 
 
-connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather_db')
+connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather')
 cursor = connection.cursor()
 
 for folder in sorted(os.listdir(path), reverse=True):
     if os.path.isdir(os.path.join(path, folder)):
-        print(f'Parsing folder: {folder}')
+        print(f'\n\nParsing folder: {folder}')
         for filename in sorted(os.listdir('/Volumes/Untitled/TO_REDO/grb2_files_REDO/' + folder)):
             if filename != '.DS_Store':
                 hour = filename.split('.')[0][-2:]
-                print(hour)
                 if int(hour) % 3 == 0: # add every 3rd hour to db
                     rows = extract_data(path, folder, filename)
                     write_to_db(rows, cursor)

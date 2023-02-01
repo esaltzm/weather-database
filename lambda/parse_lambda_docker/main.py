@@ -81,7 +81,11 @@ def handler(event=None, context=None):
     s3 = boto3.client('s3')
     bucket_name = 'noaaweatherdatadaily'
     objects = s3.list_objects(Bucket=bucket_name)
-    obj = objects['Contents'][0]
+    if objects.get('Contents'):
+        obj = objects['Contents'][0]
+    else:
+        print('Bucket is empty')
+        return 'Bucket is empty'
     key = obj['Key']
     if key.endswith('.tar'):
         print('found tar file')
@@ -91,8 +95,9 @@ def handler(event=None, context=None):
         os.remove('/tmp/file.tar')
         print('unzipped and deleted tar file locally')
     else:
+        print('.tar file not found')
         return '.tar file not found'
-    connection = database.connect(user=os.environ['USERNAME'], password=os.environ['PASSWORD'], host=os.environ['HOST'], database='weather_db')
+    connection = database.connect(user=os.environ['USERNAME'], password=os.environ['PASSWORD'], host=os.environ['HOST'], database='weather')
     cursor = connection.cursor()
     for filename in os.listdir('/tmp'):
         print(f'filename: {filename}')

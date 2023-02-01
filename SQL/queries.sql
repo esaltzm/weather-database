@@ -34,7 +34,7 @@ SELECT
     table_name AS `Table`, 
     round(((data_length + index_length) / 1024 / 1024 / 1000), 2) `Size in GB` 
 FROM information_schema.TABLES 
-WHERE table_schema = "weather_db"
+WHERE table_schema = "weather"
     AND table_name = "weather";
 -- db size in mb (mariadb)
 

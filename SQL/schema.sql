@@ -28,7 +28,7 @@ CREATE TABLE weather (
 )
 ENGINE = MyISAM;
 
-CREATE TABLE automation (
+CREATE TABLE weather (
     time_start  INT,
     latitude    NUMERIC(8, 5),
     longitude   NUMERIC(8, 5),
@@ -36,7 +36,6 @@ CREATE TABLE automation (
     gust        REAL,
     sde         REAL,
     prate       REAL,
-    crain       BOOLEAN,
     ltng        BOOLEAN
 )
 ENGINE = MyISAM;

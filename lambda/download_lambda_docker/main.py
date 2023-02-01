@@ -56,9 +56,15 @@ def handler(event=None, context=None):
     print('found .g2.tar a tag')
     file_url = link.get_attribute("href")
     counter = 0
+    print('file url: ', file_url)
+    time.sleep(5)
     while counter < 30:
         try:
             os.system(f'curl -o /tmp/file.g2.tar {file_url}')
+            file_size = os.path.getsize('/tmp/file.g2.tar')
+            if file_size < 300:
+                os.remove('/tmp/file.g2.tar')
+                raise Exception('Downloaded file size does not match the expected size')
             break
         except Exception as e:
             print(f'{e} - waiting 5 seconds before trying again.')
