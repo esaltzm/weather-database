@@ -82,3 +82,8 @@ aws rds modify-db-instance \
 
 SELECT table_name,Engine,table_rows,round(((data_length) / 1024 / 1024 / 1000), 2) AS data_size_gb,round(((index_length) / 1024 / 1024 / 1000), 2) AS index_size_gb, round(((data_length + index_length) / 1024 / 1024 / 1000), 2) AS total_size_gb FROM information_schema.tables
 WHERE table_schema = DATABASE();
+--summary
+
+SELECT COLUMN_NAME, DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where
+table_schema = 'weather' and table_name = 'weather';
+--column data types
