@@ -112,10 +112,14 @@ def handler(event=None, context=None):
     print('latest time: ', latest_time)
     delete_before = latest_time - (365 * 24 * 60 * 60) # one year earlier
     print('will delete before: ', delete_before)
-    cursor.execute(f'SELECT UNIQUE time_start FROM weather WHERE time_start <= {delete_before} ORDER BY time_start DESC;')
+    cursor.execute(f'DELETE FROM weather WHERE time_start <= {delete_before};')
     # cursor.execute(f'DELETE FROM weather WHERE time_start <= {delete_before}')
-    deleted = cursor.fetchall()
-    print('will have deleted: ', len(deleted), deleted)
+    deleted = cursor.fetchone()[0]
+    print('deleted: ', deleted)
+    cursor.execute('SELECT UNIQUE time_start FROM weather ORDER BY time_start ASC LIMIT 1;')
+    earliest_time = cursor.fetchone()[0]
+    cursor.execute('TRUNCATE TABLE time_range')
+    cursor.execute(f'INSERT INTO time_range (earliest, latest) VALUES ({earliest_time}, {latest_time})')
     cursor.close()
     connection.close()
     print('MySQL connection is closed')
