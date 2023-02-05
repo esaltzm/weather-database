@@ -40,3 +40,8 @@ CREATE TABLE weather (
 )
 ENGINE = MyISAM;
 
+CREATE TABLE time_range (
+    earliest    INT,
+    latest      INT
+);
+
