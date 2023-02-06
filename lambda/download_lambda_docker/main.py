@@ -98,7 +98,6 @@ def handler(event, context):
         except:
             print('Resource taking longer than usual to retrieve, activating secondary download')
             cloudwatch = boto3.client('events')
-            lambda_client = boto3.client('lambda')
             try:
                 cloudwatch.describe_rule(Name='secondary_download_rule')
             except cloudwatch.exceptions.ResourceNotFoundException:
@@ -112,7 +111,7 @@ def handler(event, context):
                     Targets=[
                         {
                             'Id': 'LambdaTarget',
-                            'Arn': context.invoked_function_arn,
+                            'Arn': 'arn:aws:lambda:us-east-1:813509553407:function:download-lambda-docker-prod-download',
                             'Input': json.dumps({
                                 'end_url': end_url
                             })
