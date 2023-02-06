@@ -148,9 +148,13 @@ def handler(event, context):
                 ]
             )
             return 'Calling download function again in 1 hour'
+
+        # Access download link and proceed with download
+
         file_url = link.get_attribute('href')
         counter = 0
         print('file url: ', file_url)
         time.sleep(5)
         download(file_url, driver, s3)
+        
         return 'downloaded latest data to s3 bucket'
