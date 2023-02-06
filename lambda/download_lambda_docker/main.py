@@ -77,7 +77,7 @@ def handler(event, context):
             return 'Downloaded latest data to s3 bucket'
         except Exception as e:
 
-            # If 
+            # If download link remains inaccessible, exit function and continue with hourly retries
 
             return f'Exception: {e}\nTrying again in 1 hour'
     
