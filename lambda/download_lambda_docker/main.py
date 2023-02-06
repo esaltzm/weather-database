@@ -33,6 +33,7 @@ def download(file_url, driver, s3):
     print('unzipped and removed')
     driver.quit()
 
+# Main lambda handler, with 2 routes - initial function call (entire download proceess) & secondary function call (proceed from previous point of failure hourly until success)
 
 def handler(event, context):
 
