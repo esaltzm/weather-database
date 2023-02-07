@@ -13,9 +13,11 @@ provider:
     - Effect: "Allow"
       Action:
       - "s3:*"
+      - "cloudwatch:*"
       Resource: [
         "arn:aws:s3:::noaaweatherdatadaily",
-        "arn:aws:s3:::noaaweatherdatadaily/*"
+        "arn:aws:s3:::noaaweatherdatadaily/*",
+        "arn:aws:cloudwatch:*:*:rule/*"
       ]
 
 functions:
@@ -24,3 +26,7 @@ functions:
     memorySize: 1024
     image:
       name: img
+    resources:
+      Properties:
+        UpdateReplacePolicy: "Always"
+
