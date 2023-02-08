@@ -26,7 +26,3 @@ functions:
     memorySize: 1024
     image:
       name: img
-    resources:
-      Properties:
-        UpdateReplacePolicy: "Always"
-
