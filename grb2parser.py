@@ -3,7 +3,6 @@ import pandas as pd
 import time
 import os
 import mysql.connector as database
-from in_conus import *
 from dotenv import dotenv_values
 
 # Specify environmental variables for MySQL connection, file path where GRB2 files are located
