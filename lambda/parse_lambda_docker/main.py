@@ -150,7 +150,8 @@ def handler(event=None, context=None):
     delete_before = latest_time - (365 * 24 * 60 * 60) # one year earlier
     print('will delete before: ', delete_before)
     cursor.execute(f'DELETE FROM weather WHERE time_start <= {delete_before};')
-    deleted = cursor.fetchone()[0]
+    connection.commit()
+    deleted = cursor.rowcount
     print('deleted: ', deleted)
 
     # After deletion of older rows, fetch earliest time in the database
@@ -164,7 +165,7 @@ def handler(event=None, context=None):
     cursor.execute(f'INSERT INTO time_range (earliest, latest) VALUES ({earliest_time}, {latest_time})')
 
     # Close connection, delete GRB2 zip file from S3 bucket, clear /tmp directory for next download
-    
+
     cursor.close()
     connection.close()
     print('MySQL connection is closed')
