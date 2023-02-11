@@ -163,6 +163,9 @@ def handler(event=None, context=None):
 
     cursor.execute('TRUNCATE TABLE time_range')
     cursor.execute(f'INSERT INTO time_range (earliest, latest) VALUES ({earliest_time}, {latest_time})')
+    cursor.execute('SELECT * FROM time_range')
+    time_range = cursor.fetchone()
+    print('time_range set to: ', time_range)
 
     # Close connection, delete GRB2 zip file from S3 bucket, clear /tmp directory for next download
 
