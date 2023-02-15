@@ -10,15 +10,16 @@ provider:
         path: ./
         platform: linux/amd64
   iamRoleStatements:
-    - Effect: "Allow"
-      Action:
+  - Effect: "Allow"
+    Action:
       - "s3:*"
       - "cloudwatch:*"
-      Resource: [
-        "arn:aws:s3:::noaaweatherdatadaily",
-        "arn:aws:s3:::noaaweatherdatadaily/*",
-        "arn:aws:cloudwatch:*:*:rule/*"
-      ]
+      - "events:PutRule"
+    Resource: 
+      - "arn:aws:s3:::noaaweatherdatadaily"
+      - "arn:aws:s3:::noaaweatherdatadaily/*"
+      - "arn:aws:cloudwatch:*:*:rule/*"
+      - "arn:aws:events:us-east-1:813509553407:rule/secondary_download_rule"
 
 functions:
   download:
