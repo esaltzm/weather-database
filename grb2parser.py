@@ -1,6 +1,6 @@
-import xarray as xr
-import pandas as pd
-import time
+# import xarray as xr
+# import pandas as pd
+# import time
 import os
 import mysql.connector as database
 from dotenv import dotenv_values
@@ -8,7 +8,7 @@ from dotenv import dotenv_values
 # Specify environmental variables for MySQL connection, file path where GRB2 files are located
 
 config = dotenv_values('.env')
-path = '/Volumes/Untitled/TO_REDO/grb2_files_REDO'
+path = '/Users/elijahsaltzman/grb2'
 
 # Convert GRB2 file to list, each entry containing a row to be inserted into MySQL table
 
@@ -89,23 +89,27 @@ def write_to_db(rows, cursor):
 
 # Establish MySQL connection
 
+print(config)
 connection = database.connect(user=config['USERNAME'], password=config['PASSWORD'], host=config['HOST'], database='weather')
 cursor = connection.cursor()
 
+cursor.execute('SELECT COUNT(*) FROM weather')
+print(cursor.fetchone())
+
 # Iterate through directories in GRB2 filepath - each folder contains 24 files for each hour of the day
 
-for folder in sorted(os.listdir(path), reverse=True):
-    if os.path.isdir(os.path.join(path, folder)):
-        print(f'\n\nParsing folder: {folder}')
-        for filename in sorted(os.listdir('/Volumes/Untitled/TO_REDO/grb2_files_REDO/' + folder)):
-            if filename != '.DS_Store':
-                hour = filename.split('.')[0][-2:]
+# for folder in sorted(os.listdir(path), reverse=True):
+#     if os.path.isdir(os.path.join(path, folder)):
+#         print(f'\n\nParsing folder: {folder}')
+#         for filename in sorted(os.listdir(path + '/' + folder)):
+#             if filename != '.DS_Store':
+#                 hour = filename.split('.')[0][-2:]
 
-                # Add every 3rd hour to the database
+#                 # Add every 3rd hour to the database
 
-                if int(hour) % 3 == 0:
-                    rows = extract_data(path, folder, filename)
-                    write_to_db(rows, cursor)
+#                 if int(hour) % 3 == 0:
+#                     rows = extract_data(path, folder, filename)
+#                     write_to_db(rows, cursor)
                 
 if connection:
     cursor.close()
